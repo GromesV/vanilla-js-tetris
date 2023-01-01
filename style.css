@@ -14,17 +14,21 @@
 .row {
     display: flex;
     flex-direction: row;
-    background-color: rgb(215, 215, 252);
+    /* background-color: rgb(215, 215, 252); */
     min-height: 20px;
     min-width: 20px;
 }
 
 .cell {
-    height: 50px;
-    width: 50px;
+    height: 20px;
+    width: 20px;
     border: 1px solid rgb(255, 255, 255);
+    border-radius: 2px;
 }
 
+X {
+    COLOR: #f1f1ff;
+}
 
 /* inner white */
 /* middle magenta */
