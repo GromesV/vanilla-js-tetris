@@ -56,10 +56,10 @@ function Shape(contour){
         },
         'I' : {
             'matrix' : [
-                [0,0,1,0],
-                [0,0,1,0],
-                [0,0,1,0],
-                [0,0,1,0],
+                [1],
+                [1],
+                [1],
+                [1],
             ],
             'color' : "#d64e12"
         },
@@ -67,6 +67,7 @@ function Shape(contour){
     }
     let color = null;
     let curPos = [0,0];
+    let dirty = [];
     this.getCurPos = function(){
         return curPos;
     }
@@ -83,6 +84,9 @@ function Shape(contour){
         /* need this func so that we know above which row is it safe to clear trail*/
         return contours[contour].matrix.length;
     }
+    this.getMatrixWidth = function(){
+        return contours[contour].matrix[0].length;
+    }
     this.getMatrix = function(){
         //we can draw each elem on matrix, easier to reason about
         return contours[contour].matrix;
@@ -96,6 +100,17 @@ function Shape(contour){
                 while we have rows in matrix to draw
             
         */
+
+        //first clear previous draw
+        for (let coordPair of dirty){
+            if (!table[coordPair[0]][coordPair[1]].getState()){
+                const elm = document.getElementById(`r${coordPair[0]}c${coordPair[1]}`)
+                elm.style.backgroundColor = TABLE_CANVAS_DEFAULT_COLOR;
+            }
+        }
+
+        dirty = [];
+
         let pos = this.getCurPos();
         let matrix = contours[contour].matrix;
         let cnvsRowsToDrawNdx = pos[0];
@@ -109,25 +124,12 @@ function Shape(contour){
                 // elm.style.backgroundColor = color;
                 if (table[cnvsRowsToDrawNdx][translatedCellNdx].getState())
                     return;
-                paintCellHtmlElement(cnvsRowsToDrawNdx,translatedCellNdx,cellVal,this.getColor())
+                paintCellHtmlElement(cnvsRowsToDrawNdx,translatedCellNdx,cellVal,this.getColor());
+                dirty.push([cnvsRowsToDrawNdx,translatedCellNdx]);
             });
             cnvsRowsToDrawNdx--;
             mtrxRowNdxForDrawing--;
         }
-
-        //clean row abofe the matrix we are working on
-        //that is where matrix "passed down" and made canvas dirty
-        let matrixHeight = matrix.length;
-        let matrixWidth = matrix[0].length;
-        let rowNdxToClear = pos[0] - matrixHeight;
-        if (rowNdxToClear > -1)
-            for (let colNdx = 0; colNdx < matrixWidth; colNdx++) {
-                if (!table[rowNdxToClear][colNdx].getState()){
-                    const elm = document.getElementById(`r${rowNdxToClear}c${colNdx}`)
-                    elm.style.backgroundColor = TABLE_CANVAS_DEFAULT_COLOR;
-                }
-            }
-
     }
 
     this.rotate = function(){
@@ -164,6 +166,8 @@ function Tetris(rowNo, colNo){
     //state of table, we mark with 1 if brick shape is bound to the cell
     let table = [];
     window._table = table;
+    window._rowNo = rowNo;
+    window._colNo = colNo;
     for (let i = 0; i < rowNo; i++) {
         let rowArr = [];
         for (let j = 0; j < colNo; j++) {
@@ -238,7 +242,9 @@ function Tetris(rowNo, colNo){
     let g = shapeGenerator();
 
     this.getRandomShape = function(){
-        // return new Shape(g.next().value);
+        let debug = 'T';
+        if (debug)
+            return new Shape(debug);
         let hasTen = (stackOfShapes.length >= 10);
         if (hasTen){
             for (let contour of contours){
@@ -264,7 +270,7 @@ function Tetris(rowNo, colNo){
                  //we give player 0.5 sec so he can rotate in place
                  table = pinShapeToTable(shape, table);
                  shape = this.getRandomShape();
-                 setTimeout(shapeReleaser, 500);
+                 setTimeout(shapeReleaser, 1000);
             }
             else
                 shape.setCurPos([shape.getCurPos()[0]+1, shape.getCurPos()[1]]);
@@ -300,9 +306,11 @@ window.addEventListener("keydown", (event) => {
     let table = window._table;
     switch (event.key) {
         case 'ArrowRight':
+            if ((shape.getCurPos()[1] + shape.getMatrixWidth()) == window._colNo)
+                break;
             shape.setCurPos([shape.getCurPos()[0], shape.getCurPos()[1]+1]);
             shape.draw(table);
-            break;
+            
     
         default:
             break;
