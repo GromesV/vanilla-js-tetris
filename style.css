@@ -1,3 +1,7 @@
+body {
+    background-color: #efcc19;
+}
+
 .wrapper {
     height: 90vh;
     width: 90vw;
@@ -9,6 +13,7 @@
 .tetris-container {
     display: flex;
     flex-direction: column;
+    border: solid black 2px;
 }
 
 .row {
@@ -20,14 +25,31 @@
 }
 
 .cell {
-    height: 20px;
-    width: 20px;
-    border: 1px solid rgb(255, 255, 255);
-    border-radius: 2px;
+    height: 30px;
+    width: 30px;
+    background-color: #99B086;
+    display: grid;
+    place-items: center;
+}
+.cell-lvl-1 {
+    height: 26px;
+    width: 26px;
+    border: solid #99B086 2px;
+    background-color: #839470;
+    display: grid;
+    place-items: center;
+}
+.cell-lvl-2 {
+    height: 18px;
+    width: 18px;
+    border: solid #99B086 2px;
+    background-color: #839470;
+    display: grid;
+    place-items: center;
 }
 
 X {
-    COLOR: #f1f1ff;
+    color: rgb(131, 148, 112);/* #839470*/
 }
 
 /* inner white */

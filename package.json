@@ -1,0 +1,20 @@
+{
+  "name": "vanilla-js-tetris",
+  "version": "1.0.0",
+  "description": "practice project",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GromesV/vanilla-js-tetris.git"
+  },
+  "author": "GromesV",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GromesV/vanilla-js-tetris/issues"
+  },
+  "homepage": "https://github.com/GromesV/vanilla-js-tetris#readme"
+}
