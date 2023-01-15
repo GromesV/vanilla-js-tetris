@@ -1,9 +1,12 @@
 import Shape from "./Shape.js";
 import Cell from "./Cell.js";
+import Commons from "./Commons.js";
 
 export default function Tetris(rowNo, colNo){
     let contours = ['Z','L','O','I','T','Z','J'];
     let table = [];
+    let score = 0;
+    document.getElementById('score').textContent = score;
     window._table = table;
     window._rowNo = rowNo;
     window._colNo = colNo;
@@ -42,14 +45,85 @@ export default function Tetris(rowNo, colNo){
             for (let j = 0; j < shape.matrix[i].length; j++) { 
                 if (shape.matrix[i][j]){
                     let tblCoords = shape.getCellTableCoords(i,j);
-                    table[tblCoords.x][tblCoords.y].setState(shape.matrix[i][j]).setColor(shape.color);
+                    table[tblCoords.x][tblCoords.y].setState(shape.matrix[i][j]).setColor(tblCoords.x, tblCoords.y, shape.matrix[i][j], );
                 }
             }
         }
+        table = handleFullLines(table);
+        return table;
+    }
+
+    function restructureTable(table){
+        
+        let count = table.length;
+        let fullLines = [];
+        let cntFullLines = 0;
+        let ndxFullLines = []
+
+        while(count--){
+            // if (table[count].every(cell=>cell.state) && table[count-1]?.some(cell=>cell.state)){
+            if (table[count].every(cell=>cell.state)){
+                table.splice(count, 1);
+                cntFullLines++;
+                ndxFullLines.push(count);
+            }
+            else{
+                if (cntFullLines) fullLines.push(cntFullLines);
+                cntFullLines = 0;
+            }
+        }
+        return [fullLines, table];
+    }
+
+    function getScore(fullLines){
+        return fullLines.reduce((acc,cur)=>{
+            return acc + {
+                1:40,
+                2:100,
+                3:300,
+                4:1200,
+            }[cur];
+        },0);
+    }
+
+    function redraw(origTbl, newTbl){
+        for (let i = 0; i < origTbl.length; i++) {
+            const origRow = origTbl[i];
+            const newRow = newTbl[i];
+            for (let j = 0; j < origRow.length; j++) {
+                const origCell = origRow[j];
+                const newCell = newRow[j];
+                if (origCell.state !== newCell.state)
+                    Commons.paintCellHtmlElement(i,j, newCell.state);
+            }
+        }
+    }
+
+    function handleFullLines(table){
+        let startingTable = structuredClone(table);
+        let fullLines;
+        [fullLines, table] = restructureTable(table);
+        score += getScore(fullLines);
+        
+        document.getElementById('score').textContent = score;
+
+        let totalDeletedRows = fullLines.reduce((acc,cur) => acc+cur, 0);
+
+        for (let i = 0; i < totalDeletedRows; i++) {
+            let tRow = [];
+            for (let j = 0; j < colNo; j++) 
+                tRow.push(new Cell(0, null, i, j));
+            table.unshift(tRow);
+        }
+
+        if (fullLines.length)
+            redraw(startingTable, table);
+
         return table;
     }
 
     function getRandomShape (){
+        // return new Shape('Z');
         let hasTen = (stackOfShapes.length >= 10);
         if (hasTen){
             for (let contour of contours){
@@ -104,7 +178,7 @@ export default function Tetris(rowNo, colNo){
                 shape.x++;
         }
         
-        let intervalId = setInterval(shapeReleaser, 200);
+        let intervalId = setInterval(shapeReleaser, 500);
         return intervalId;
     }
 }

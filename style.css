@@ -1,5 +1,8 @@
 body {
     background-color: #efcc19;
+    display: flex;
+    flex-direction: row;
+    font-family: 'Chivo Mono', monospace;
 }
 
 .wrapper {
@@ -48,8 +51,8 @@ body {
     place-items: center;
 }
 
-X {
-    color: rgb(131, 148, 112);/* #839470*/
+#score {
+    font-size: 40px;
 }
 
 /* inner white */

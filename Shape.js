@@ -62,8 +62,8 @@ export default class Shape {
                 let translatedCellNdx = cellNdx + this.y;
                 if (table[cnvsRowsToDrawNdx][translatedCellNdx].state)
                     return;
-                Commons.paintCellHtmlElement(cnvsRowsToDrawNdx,translatedCellNdx,cellVal,this.color);
-                this.dirty.push([cnvsRowsToDrawNdx,translatedCellNdx]);
+                Commons.paintCellHtmlElement(cnvsRowsToDrawNdx, translatedCellNdx, cellVal, this.color);
+                this.dirty.push([cnvsRowsToDrawNdx, translatedCellNdx]);
             });
             cnvsRowsToDrawNdx--;
             mtrxRowNdxForDrawing--;
@@ -106,6 +106,8 @@ export default class Shape {
 
     doRotate(){
         this.matrix = this.rotationGenerator().matrix;
+        this.matrixHeight = this.matrix.length;
+        this.matrixWidth = this.matrix[0].length;
         this.rotIndex++;
     }
 

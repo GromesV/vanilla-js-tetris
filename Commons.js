@@ -1,7 +1,7 @@
 let Commons = {
     TABLE_CANVAS_DEFAULT_COLOR : '#99B086',
     TABLE_CANVAS_DARKER_COLOR : '#839470',
-    paintCellHtmlElement: function(rowNdx, colNdx, cellVal, color){
+    paintCellHtmlElement: function(rowNdx, colNdx, cellVal){
         let elm = document.getElementById(`r${rowNdx}c${colNdx}`);
         let elm1 = elm.children[0].children[0];
         let elm2 = elm.children[0].children[0].children[0]
